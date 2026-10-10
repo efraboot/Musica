@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101e2d">
+<title>Afina Bird · profe.efra</title>
+<meta name="description" content="Juegos de afinación y dictado musical para aprender jugando.">
+<link rel="stylesheet" href="dictado.css">
+<style>
+:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#edf6fa;background:#101e2d;--mint:#b5f5b0;--muted:#9db0bf;--line:#344657}*{box-sizing:border-box}body{margin:0;padding:28px 18px 22px}main{max-width:1000px;margin:auto}header{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:20px}.eyebrow{font-size:12px;letter-spacing:2px;color:var(--mint);text-transform:uppercase}h1{font-size:clamp(30px,5vw,48px);letter-spacing:-2px;margin:5px 0 0}h1 span{color:var(--mint)}.tag{border:1px solid var(--line);padding:8px 12px;border-radius:30px;font-size:12px;color:var(--muted)}.intro{color:var(--muted);margin:0 0 18px;font-size:15px;line-height:1.6}.settings{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}label{display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:12px;flex:1;min-width:145px}select,button{font:inherit}select{background:#192c3d;color:#edf6fa;border:1px solid var(--line);border-radius:10px;padding:10px;min-height:44px}button{cursor:pointer;border-radius:10px;border:1px solid var(--line);min-height:44px;background:#21394b;color:#edf6fa;padding:11px 16px;font-weight:650}button.primary{color:#132d27;background:var(--mint);border-color:var(--mint)}button:disabled{opacity:.45;cursor:not-allowed}button:focus-visible,select:focus-visible{outline:3px solid #f4c768;outline-offset:3px}.arena{position:relative;overflow:hidden;border:1px solid #344b5c;border-radius:18px;background:#142b3c;aspect-ratio:2/1}canvas{display:block;width:100%;height:100%}.overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:22px;background:#101e2dd9;backdrop-filter:blur(4px)}.overlay[hidden]{display:none}.overlay .badge{font-size:42px;margin-bottom:8px}.overlay h2{font-size:clamp(20px,3vw,30px);margin:0 0 10px}.overlay p{max-width:480px;line-height:1.55;color:#b2c4cf;margin:0}.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0}.stat{background:#192c3d;border:1px solid #2e4153;border-radius:12px;padding:13px 15px}.stat small{font-size:11px;letter-spacing:1px;color:var(--muted);text-transform:uppercase}.stat strong{display:block;font-size:25px;margin-top:4px}.stat strong.good{color:var(--mint)}.tuning{background:#192c3d;border:1px solid #2e4153;border-radius:12px;padding:14px 16px;margin-bottom:14px}.tune-labels{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted);margin-bottom:10px}.meter{height:14px;border-radius:10px;background:#0f1e2a;position:relative;overflow:hidden}.zone{position:absolute;height:100%;background:#b5f5b047;left:37.5%;width:25%}.center{position:absolute;left:50%;height:100%;width:2px;background:#b5f5b0}.pointer{position:absolute;height:100%;width:7px;border-radius:8px;background:#f6c972;left:50%;transform:translateX(-50%);transition:left .09s}.pointer[hidden]{display:none}.actions{display:flex;gap:10px;flex-wrap:wrap}.status{color:#c4d4de;line-height:1.5;font-size:14px;min-height:23px;margin:14px 0 9px}.foot{font-size:12px;line-height:1.6;color:var(--muted)}.foot b{color:#c4d4de}@media(max-width:600px){body{padding:18px 12px}.tag{display:none}.arena{aspect-ratio:1.25}.stats{gap:7px}.stat{padding:11px 9px}.stat small{font-size:10px}.stat strong{font-size:21px}.intro{font-size:14px}.settings{gap:8px}label{min-width:125px}.actions button{flex:1}.overlay p{font-size:13px}.overlay .badge{font-size:26px}.overlay{padding:16px}}
+</style>
+</head>
+<body>
+<main>
+<header><div><div class="eyebrow">profe.efra · juega con tu voz</div><h1>Afina <span>Bird</span></h1></div><span class="tag">DO · RE · MI · FA · SOL · LA · SI</span></header>
+<nav class="game-tabs" aria-label="Elegir minijuego"><button id="tabHome" aria-selected="true">Inicio</button><button id="tabBird" aria-selected="false">Afinación</button><button id="tabDict" aria-selected="false">Dictado musical</button></nav>
+<section id="homePanel"><p class="intro">Dos formas de entrenar tu oído. Elige un juego y practica a tu ritmo.</p><div class="game-cards"><button class="game-card" id="openBird"><span class="card-icon">♪</span><strong>Afina Bird</strong><span>Canta, guía al pajarito y atraviesa los obstáculos.</span><em>Entrena tu afinación →</em></button><button class="game-card" id="openDict"><span class="card-icon">♫</span><strong>Dictado musical</strong><span>Escucha una melodía y escríbela en el pentagrama.</span><em>Entrena tu transcripción →</em></button></div><p class="foot">Sin cuentas ni guardado: al salir de un minijuego o recargar se reinicia la sesión. Puedes elegir cualquier nivel al entrar.</p></section>
+<section id="birdPanel" hidden>
+<p class="intro">Canta la nota indicada para guiar al pajarito por el hueco. Una voz más aguda lo hace subir; una más grave lo hace bajar.</p>
+<div class="settings">
+<label>Registro <select id="octave"><option value="3">Do3–Si3 · grave</option><option value="4" selected>Do4–Si4 · medio</option><option value="5">Do5–Si5 · agudo</option></select></label>
+<label>Dificultad <select id="difficulty"><option value="easy">Inicial · ±50 cents</option><option value="normal">Intermedio · ±35 cents</option><option value="hard">Preciso · ±20 cents</option></select></label>
+<label>Recorrido <select id="order"><option value="scale">Escala ascendente</option><option value="random">Notas mezcladas</option></select></label>
+</div>
+<div class="arena"><canvas id="game" width="1000" height="500" role="img" aria-label="Juego de afinación con un pajarito y obstáculos"></canvas>
+<div class="overlay" id="overlay"><div class="badge" aria-hidden="true">♪</div><h2 id="overlayTitle">Tu voz le da alas</h2><p id="overlayText">Activa el micrófono, escucha la referencia y canta una nota sostenida. Completa 14 obstáculos a tu ritmo.</p></div></div>
+<div class="stats"><div class="stat"><small>Nota objetivo</small><strong id="target">Do4</strong></div><div class="stat"><small>Tu voz</small><strong id="heard">—</strong></div><div class="stat"><small>Obstáculos</small><strong id="score">0 / 14</strong></div></div>
+<div class="tuning"><div class="tune-labels"><span>Más grave ↓</span><span id="tuneText">Canta para ver tu afinación</span><span>Más agudo ↑</span></div><div class="meter"><div class="zone" id="zone"></div><div class="center"></div><div class="pointer" id="pointer" hidden></div></div></div>
+<div class="actions"><button class="primary" id="start">Activar micrófono y jugar</button><button id="reference">Escuchar nota</button><button id="pause" disabled>Pausar</button><button id="stop" disabled>Apagar micrófono</button></div>
+<p class="status" id="status" role="status" aria-live="polite">El juego escucha el tono; no necesitas cantar fuerte.</p>
+<div class="foot"><b>Cómo jugar:</b> cada obstáculo exige cantar su nota afinada durante al menos 0,3 segundos. Si no cantas, el avance se detiene para que puedas respirar. Tienes tres vidas. Cambia el registro si la escala no te queda cómoda; no fuerces la voz.<br><b>Privacidad:</b> el sonido se analiza en tu navegador. El juego no graba ni envía tu audio. Para activar el micrófono, usa HTTPS (por ejemplo, GitHub Pages) o localhost. La detección puede fallar con ruido o varias voces.</div>
+</section>
+<section id="dictPanel" hidden aria-labelledby="dictTitle">
+<div class="dict-heading"><div><div class="eyebrow">escucha · escribe · compara</div><h2 id="dictTitle">Dictado musical</h2></div><span class="session-badge" id="dictProgress">Ejercicio 1 de 5</span></div>
+<p class="intro">Escucha dos compases y reconstruye la melodía. Arrastra una figura al pentagrama o selecciónala y toca el lugar donde debe sonar.</p>
+<div class="settings"><label>Nivel<select id="dictLevel"></select></label><label>Compás<select id="dictMeter"></select></label><label>Velocidad<select id="dictTempo"><option value="50">Lento · 50</option><option value="66" selected>Tranquilo · 66</option><option value="84">Normal · 84</option></select></label></div>
+<p id="levelDescription" class="level-description"></p>
+<div class="actions"><button class="primary" id="hearMelody">▶ Escuchar melodía</button><button id="hearDo">Escuchar Do4</button><button id="hearAnswer">Escuchar lo escrito</button><button id="stopDictAudio" disabled>Detener audio</button></div>
+<label class="inline-check"><input type="checkbox" id="dictClicks" checked> Metrónomo durante la melodía (siempre hay una cuenta previa)</label>
+<div class="dict-toolbar"><div id="figurePalette" class="figure-palette" aria-label="Figuras disponibles"></div><label class="inline-check"><input type="checkbox" id="restTool">Colocar silencio</label></div>
+<p class="editor-hint" id="toolHint"></p>
+<div class="staff-scroll" id="staffScroll"><svg id="dictStaff" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pentagrama en clave de sol para escribir la melodía"></svg></div>
+<div class="editor-bottom"><span id="barFill"></span><div class="actions"><button id="undoDict">Deshacer</button><button id="clearDict">Vaciar pentagrama</button></div></div>
+<div id="entryList" class="entry-list" aria-label="Notas colocadas"></div>
+<div class="actions check-actions"><button class="primary" id="checkDict">Comprobar</button><button id="showDictSolution">Ver solución</button><button id="newDictExercise">Otro ejercicio</button><button id="nextDictExercise" hidden>Siguiente ejercicio →</button><button id="advanceDictLevel" hidden>Subir de nivel →</button></div>
+<p id="dictFeedback" class="dict-feedback" role="status" aria-live="polite">Escucha la melodía antes de escribir.</p>
+<div id="solutionArea" hidden><h3>Solución</h3><p class="foot">Las notas y los silencios ocupan su duración exacta. La línea de abajo muestra las subdivisiones para ayudarte a contar.</p><div class="staff-scroll"><svg id="solutionStaff" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Solución del dictado"></svg></div></div>
+<details class="dict-help"><summary>Cómo escribir y contar</summary><p>La altura indica la nota y la posición horizontal indica cuándo empieza. El Do4 está en la línea adicional inferior; Mi4 en la primera línea y Sol4 en la segunda. En los niveles avanzados se usa Do4–Do5.</p><p>Elige una figura y haz clic en el pentagrama. También puedes arrastrar desde la paleta; arrastra una nota colocada para cambiarla. Toca una nota para seleccionarla: las flechas arriba/abajo cambian su altura, izquierda/derecha la desplazan y Supr la borra. En la lista inferior puedes cambiar nota o duración y borrar.</p><p>En 4/4 hay cuatro negras por compás; en 3/4, tres; en 2/4, dos. Una redonda ocupa cuatro negras: solo cabe en 4/4 sin ligaduras. En 6/8 hay seis corcheas agrupadas 3+3, con dos pulsos de negra con puntillo. Por eso este nivel añade figuras con puntillo. No se incluyen ligaduras ni figuras que crucen la barra.</p><p>El dictado usa sonidos sintetizados, con La4 = 440 Hz. No requiere micrófono. Si revelas la solución, puedes compararla y avanzar, pero ese ejercicio no suma un acierto.</p></details>
+<p class="foot">La sesión tiene cinco ejercicios. Al completarla puedes subir de nivel; todos los niveles están disponibles desde el menú. Al cambiar de juego, nivel o compás se reinicia la sesión. No se guarda progreso ni audio.</p>
+</section>
+</main>
+<script>
+'use strict';
+// All audio analysis stays on this device. No dependencies or network requests.
+const $=id=>document.getElementById(id);
+const canvas=$('game'),ctx=canvas.getContext('2d');
+const W=1000,H=500,BIRD_X=210,RADIUS=16;
+const names=['Do','Do♯','Re','Re♯','Mi','Fa','Fa♯','Sol','Sol♯','La','La♯','Si'];
+const scale=[0,2,4,5,7,9,11];
+const modes={easy:{tolerance:50,speed:90},normal:{tolerance:35,speed:115},hard:{tolerance:20,speed:140}};
+let audio=null,stream=null,analyser=null,source=null,silentGain=null,buffer=null;
+let state='idle',score=0,lives=3,gate=null,birdY=380,midiNow=null,lastPitchAt=0;
+let lastAnalysis=0,lastFrame=0,held=0,voiceTrail=[],sequence=[],totalTuned=0,totalVoiced=0;
+let referenceUntil=0,referenceOsc=null,referenceGain=null,startPending=false;
+let frameTime=0,startEpoch=0;
+const work=new Float32Array(2049);
+function midiFrequency(midi){return 440*Math.pow(2,(midi-69)/12)}
+function frequencyMidi(hz){return 69+12*Math.log2(hz/440)}
+function noteName(midi){const n=Math.round(midi);return names[((n%12)+12)%12]+(Math.floor(n/12)-1)}
+function baseMidi(){return (Number($('octave').value)+1)*12}
+function mode(){return modes[$('difficulty').value]}
+function pitchY(midi){return 385-(midi-baseMidi())*(270/11)}
+function gapHalf(){return mode().tolerance/100*(270/11)+RADIUS+3}
+// YIN difference function with cumulative mean normalization and parabolic refinement.
+// The first sufficiently periodic trough favors the fundamental over its subharmonics.
+function detectPitch(samples,sampleRate){
+  let power=0,mean=0;for(let i=0;i<samples.length;i++)mean+=samples[i];mean/=samples.length;
+  for(let i=0;i<samples.length;i++){const v=samples[i]-mean;power+=v*v}
+  if(Math.sqrt(power/samples.length)<0.009)return null;
+  const minLag=Math.max(2,Math.floor(sampleRate/1300));
+  const maxLag=Math.min(Math.floor(sampleRate/65),Math.floor(samples.length/2)-1);
+  const count=samples.length-maxLag;work[0]=1;let running=0;
+  for(let lag=1;lag<=maxLag;lag++){
+    let diff=0;for(let j=0;j<count;j++){const d=samples[j]-samples[j+lag];diff+=d*d}
+    running+=diff;work[lag]=running?diff*lag/running:1;
+    const t=lag-1;
+    if(t>=minLag&&work[t]<0.14&&work[t]<=work[t-1]&&work[t]<work[lag]){
+      const a=work[t-1],b=work[t],c=work[lag],den=2*(2*b-a-c);
+      const adjustment=den?(c-a)/den:0;
+      return sampleRate/(t+Math.max(-1,Math.min(1,adjustment)));
+    }
+  }
+  return null;
+}
+function makeSequence(){
+  if($('order').value==='scale')return Array.from({length:14},(_,i)=>scale[i%7]);
+  const result=[];while(result.length<14){const copy=[...scale];for(let i=copy.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]]}if(result.length&&copy[0]===result[result.length-1])[copy[0],copy[1]]=[copy[1],copy[0]];result.push(...copy)}return result;
+}
+function currentTarget(){return gate?gate.midi:baseMidi()}
+function setOverlay(title,text,visible=true){$('overlayTitle').textContent=title;$('overlayText').textContent=text;$('overlay').hidden=!visible}
+function status(text){$('status').textContent=text}
+function controls(){
+  const busy=['playing','paused'].includes(state);
+  for(const id of ['octave','difficulty','order'])$(id).disabled=busy||startPending;
+  $('start').disabled=busy||startPending;$('start').textContent=stream?'Volver a jugar':'Activar micrófono y jugar';
+  $('pause').disabled=!busy;$('pause').textContent=state==='paused'?'Continuar':'Pausar';
+  $('stop').disabled=!stream;$('reference').disabled=startPending;
+}
+function nextGate(){held=0;gate={x:W+30,width:64,midi:baseMidi()+sequence[score],qualified:false};$('target').textContent=noteName(gate.midi)}
+function clearVoice(){midiNow=null;voiceTrail=[];lastPitchAt=0;$('heard').textContent='—';$('pointer').hidden=true;$('tuneText').textContent='Canta para ver tu afinación';$('heard').classList.remove('good')}
+function resetGame(){
+  referenceUntil=performance.now()+350;score=0;lives=3;totalTuned=0;totalVoiced=0;sequence=makeSequence();clearVoice();birdY=pitchY(baseMidi());nextGate();state='playing';$('score').textContent='0 / 14';setOverlay('','',false);controls();status('Canta '+noteName(currentTarget())+'. Puedes escuchar la referencia antes de cantar.');
+}
+async function ensureAudio(){const Constructor=window.AudioContext||window.webkitAudioContext;if(!Constructor)throw new Error('audioUnsupported');if(!audio||audio.state==='closed')audio=new Constructor();await audio.resume()}
+async function start(){
+  if(startPending||['playing','paused'].includes(state))return;
+  startPending=true;const epoch=++startEpoch;controls();status('Esperando acceso al micrófono…');
+  try{
+    if(!navigator.mediaDevices?.getUserMedia)throw new Error('secureContext');
+    await ensureAudio();if(epoch!==startEpoch)return;
+    if(!stream){const acquired=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},video:false});
+      if(epoch!==startEpoch){acquired.getTracks().forEach(t=>t.stop());return}stream=acquired;
+      source=audio.createMediaStreamSource(stream);analyser=audio.createAnalyser();analyser.fftSize=4096;analyser.smoothingTimeConstant=0;buffer=new Float32Array(analyser.fftSize);source.connect(analyser);
+      // A muted output keeps analysis alive across browsers without microphone feedback.
+      silentGain=audio.createGain();silentGain.gain.value=0;analyser.connect(silentGain);silentGain.connect(audio.destination);
+      for(const track of stream.getTracks())track.addEventListener('ended',()=>{if(stream){stopMic();status('Se perdió el micrófono. Actívalo de nuevo para jugar.')}});
+    }
+    resetGame();
+  }catch(error){
+    if(epoch!==startEpoch)return;
+    state='idle';
+    const messages={NotAllowedError:'Permite el micrófono en el navegador para jugar. Si lo bloqueaste, revisa los permisos del sitio.',NotFoundError:'No se encontró un micrófono. Conecta uno y vuelve a intentarlo.',NotReadableError:'No se pudo abrir el micrófono. Comprueba si otra aplicación lo está usando.',secureContext:'Abre el juego en HTTPS (GitHub Pages) o localhost para activar el micrófono.',audioUnsupported:'Este navegador no dispone del audio necesario. Prueba otro navegador actualizado.'};
+    status(messages[error.name]||messages[error.message]||'No se pudo activar el audio. Revisa el micrófono y vuelve a intentarlo.');
+  }finally{startPending=false;controls()}
+}
+function stopReference(){if(referenceOsc){try{referenceOsc.stop()}catch{}referenceOsc.disconnect();referenceGain.disconnect();referenceOsc=null;referenceGain=null}}
+async function playReference(){
+  try{await ensureAudio();stopReference();clearVoice();held=0;referenceUntil=performance.now()+1450;
+    const osc=audio.createOscillator(),gain=audio.createGain();referenceOsc=osc;referenceGain=gain;osc.type='sine';osc.frequency.value=midiFrequency(currentTarget());
+    gain.gain.setValueAtTime(0,audio.currentTime);gain.gain.linearRampToValueAtTime(.14,audio.currentTime+.04);gain.gain.setValueAtTime(.14,audio.currentTime+.8);gain.gain.linearRampToValueAtTime(0,audio.currentTime+1);osc.connect(gain);gain.connect(audio.destination);osc.start();osc.stop(audio.currentTime+1.02);
+    osc.onended=()=>{osc.disconnect();gain.disconnect();if(referenceOsc===osc){referenceOsc=null;referenceGain=null}};
+    status('Escucha '+noteName(currentTarget())+' y después cántala. El avance espera mientras suena la referencia.');
+  }catch{status('No se pudo reproducir la referencia. Prueba otro navegador actualizado.')}
+}
+function pauseGame(){
+  if(state==='playing'){state='paused';clearVoice();held=0;setOverlay('Un respiro','Pulsa Continuar cuando quieras seguir. El micrófono sigue activado.');status('Juego pausado. Puedes apagar el micrófono con el botón.');}
+  else if(state==='paused'){state='playing';clearVoice();referenceUntil=performance.now()+350;setOverlay('','',false);status('Continúa cantando '+noteName(currentTarget())+'.');}
+  controls();
+}
+function stopMic(){
+  startEpoch++;const old=stream;stream=null;if(old)old.getTracks().forEach(t=>t.stop());
+  if(source)source.disconnect();if(analyser)analyser.disconnect();if(silentGain)silentGain.disconnect();source=null;analyser=null;silentGain=null;buffer=null;stopReference();if(audio){audio.close().catch(()=>{});audio=null}
+  state='idle';gate=null;held=0;clearVoice();setOverlay('Micrófono apagado','Puedes volver a activarlo cuando quieras practicar.');status('Micrófono apagado.');controls();
+}
+function finish(won){
+  state='finished';const accuracy=totalVoiced?Math.round(totalTuned/totalVoiced*100):0;
+  setOverlay(won?'¡Escala completada!':'Vamos otra vez',score+' de 14 obstáculos · '+accuracy+'% del tiempo cantado dentro de la afinación objetivo. Pulsa Volver a jugar o apaga el micrófono.');status('Partida terminada. El micrófono sigue activado hasta que lo apagues.');controls();
+}
+function analyse(now){
+  if(!analyser||state!=='playing'||now<referenceUntil)return;
+  analyser.getFloatTimeDomainData(buffer);const hz=detectPitch(buffer,audio.sampleRate);
+  if(hz){const midi=frequencyMidi(hz);voiceTrail.push(midi);if(voiceTrail.length>3)voiceTrail.shift();const sorted=[...voiceTrail].sort((a,b)=>a-b);midiNow=sorted[Math.floor(sorted.length/2)];lastPitchAt=now;}
+  else{voiceTrail=[];if(now-lastPitchAt>180)clearVoice()}
+}
+function update(dt,now){
+  if(state!=='playing')return;
+  const voiced=midiNow!==null&&now-lastPitchAt<180&&now>=referenceUntil;
+  if(!voiced){held=0;$('tuneText').textContent=now<referenceUntil?'Escucha y luego canta':'Esperando tu voz…';$('pointer').hidden=true;$('heard').classList.remove('good');return;}
+  const cents=(midiNow-gate.midi)*100;const tuned=Math.abs(cents)<=mode().tolerance;
+  $('heard').textContent=noteName(midiNow);$('heard').classList.toggle('good',tuned);
+  $('tuneText').textContent=tuned?'¡Afinado!':Math.abs(cents)>100?'Busca '+noteName(gate.midi):(cents>0?'Baja un poco':'Sube un poco');
+  $('pointer').hidden=false;$('pointer').style.left=(50+Math.max(-200,Math.min(200,cents))/4)+'%';
+  const size=mode().tolerance/2;$('zone').style.left=(50-size/2)+'%';$('zone').style.width=size+'%';
+  totalVoiced+=dt;if(tuned){totalTuned+=dt;held+=dt;if(held>=.3)gate.qualified=true}else held=0;
+  birdY+=(Math.max(45,Math.min(H-45,pitchY(midiNow)))-birdY)*Math.min(1,dt*13);
+  gate.x-=mode().speed*dt;
+  const touching=gate.x<=BIRD_X+RADIUS&&gate.x+gate.width>=BIRD_X-RADIUS;
+  if(touching&&(!tuned||!gate.qualified||Math.abs(birdY-pitchY(gate.midi))+RADIUS>gapHalf())){
+    lives--;if(lives<=0){finish(false);return;}
+    gate.x=W+30;gate.qualified=false;held=0;referenceUntil=now+700;clearVoice();status('Choque. Quedan '+lives+' vidas. Escucha '+noteName(gate.midi)+' y vuelve a intentarlo.');return;
+  }
+  if(gate.x+gate.width<BIRD_X-RADIUS){score++;$('score').textContent=score+' / 14';if(score===14){finish(true);return;}nextGate();status('¡Bien! Ahora canta '+noteName(gate.midi)+'.');}
+}
+function roundRect(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r)}
+function draw(now){
+  ctx.clearRect(0,0,W,H);const sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#173349');sky.addColorStop(1,'#102637');ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
+  for(let i=0;i<7;i++){const midi=baseMidi()+scale[i],y=pitchY(midi);ctx.strokeStyle='#ffffff0e';ctx.beginPath();ctx.moveTo(76,y);ctx.lineTo(W,y);ctx.stroke();ctx.fillStyle='#89a5b8';ctx.font='14px system-ui';ctx.fillText(names[scale[i]],20,y+5)}
+  for(let i=0;i<20;i++){const x=(i*71+now*.008)%W;ctx.fillStyle='#ffffff15';ctx.beginPath();ctx.arc(x,25+(i*53)%390,2,0,Math.PI*2);ctx.fill()}
+  ctx.fillStyle='#1d4050';ctx.beginPath();ctx.moveTo(0,H);ctx.lineTo(0,465);for(let x=0;x<=W;x+=40)ctx.lineTo(x,455+Math.sin(x*.008)*14);ctx.lineTo(W,H);ctx.fill();
+  if(gate){const y=pitchY(gate.midi),half=gapHalf();ctx.fillStyle=gate.qualified?'#90d899':'#507c7c';roundRect(gate.x,-15,gate.width,y-half+15,12);ctx.fill();roundRect(gate.x,y+half,gate.width,H-y-half+15,12);ctx.fill();ctx.strokeStyle='#b5f5b0';ctx.lineWidth=2;ctx.setLineDash([4,5]);ctx.beginPath();ctx.moveTo(gate.x-5,y);ctx.lineTo(gate.x+gate.width+5,y);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#d6ffd0';ctx.font='bold 22px system-ui';ctx.textAlign='center';ctx.fillText(noteName(gate.midi),Math.min(W-65,gate.x+gate.width/2),Math.max(35,y-half-20));ctx.textAlign='left';}
+  const bob=state==='playing'?0:Math.sin(now*.004)*5;ctx.save();ctx.translate(BIRD_X,birdY+bob);ctx.rotate(midiNow===null?0:Math.max(-.2,Math.min(.2,(birdY-250)/700)));ctx.fillStyle='#f7ce67';ctx.beginPath();ctx.ellipse(0,0,22,18,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#e7a848';ctx.beginPath();ctx.ellipse(-9,4,12,7,Math.sin(now*.018)*.3,0,Math.PI*2);ctx.fill();ctx.fillStyle='#f29156';ctx.beginPath();ctx.moveTo(19,0);ctx.lineTo(33,4);ctx.lineTo(19,8);ctx.fill();ctx.fillStyle='#fff8dd';ctx.beginPath();ctx.arc(9,-6,7,0,Math.PI*2);ctx.fill();ctx.fillStyle='#102637';ctx.beginPath();ctx.arc(11,-6,3,0,Math.PI*2);ctx.fill();ctx.restore();
+  ctx.font='16px system-ui';ctx.fillStyle='#f7ce67';ctx.fillText('♥ '.repeat(lives),W-110,33);
+  if(state==='playing'&&gate){ctx.fillStyle='#d6e4eb';ctx.textAlign='center';ctx.font='15px system-ui';ctx.fillText(midiNow===null?'Canta para avanzar':'Mantén la nota al cruzar',W/2,H-18);ctx.textAlign='left';}
+}
+function loop(now){const dt=Math.min(.05,(now-lastFrame)/1000||0);lastFrame=now;frameTime=now;if(now-lastAnalysis>65){analyse(now);lastAnalysis=now}update(dt,now);if(!$('birdPanel').hidden)draw(now);requestAnimationFrame(loop)}
+$('start').addEventListener('click',start);$('reference').addEventListener('click',playReference);$('pause').addEventListener('click',pauseGame);$('stop').addEventListener('click',stopMic);
+for(const id of ['octave','difficulty','order'])$(id).addEventListener('change',()=>{gate=null;clearVoice();birdY=pitchY(baseMidi());$('target').textContent=noteName(baseMidi())});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='playing')pauseGame()});window.addEventListener('pagehide',stopMic);
+requestAnimationFrame(loop);
+</script>
+<script src="dictado.js"></script>
+</body>
+</html>
